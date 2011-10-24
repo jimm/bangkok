@@ -156,13 +156,13 @@ or un-.
 GameListener creates a MIDI sequence from the chess game's moves. When a piece
 moves, MIDI notes are generated and a few controller values are set. Any
 listener you write must implement the methods
-- start_game(io)
-- end_game
-- move(piece, from_square, to_square)
-- capture(attacker_piece, loser_piece)
-- check
-- checkmate
-- pawn_to_queen(pawn)
+- =start_game(io)=
+- =end_game=
+- =move(piece, from_square, to_square)=
+- =capture(attacker_piece, loser_piece)=
+- =check=
+- =checkmate=
+- =pawn_to_queen(pawn)=
 
 For each move, the GameListener generates three sets of MIDI events: one for
 the move start, one for a point halfway between the start and the destination,
@@ -172,6 +172,7 @@ board, min = top and bottom of board), and a quarter note. The note is from a
 C scale, where the low C = the color's home rank and the high C = the opposite
 color's home rank.
 
+#+BEGIN_EXAMPLE
   SPEAKER    midi 1 - 8    SPEAKER (black)
 
      low
@@ -186,6 +187,7 @@ color's home rank.
       <---- panning ---->
 
   SPEAKER    midi 9 - 16    SPEAKER (white)
+#+END_EXAMPLE
 
 ChessGame takes a listener in its constructor and creates a Board. The method
 ChessGame#read_moves reads game data. Calling ChessGame#play moves the pieces,
