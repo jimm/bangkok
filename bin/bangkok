@@ -1,0 +1,44 @@
+require 'getoptlong'
+begin
+  require 'bangkok/chessgame'
+rescue LoadError
+  require 'rubygems'
+  require_gem 'bangkok/chessgame'
+end
+
+def usage
+  $stderr.puts <<EOS
+usage: bangkok [-c config_file] [-v] chessgame.pgn ...
+  -c file  Passes config_file to the GameListener
+  -v       Verbose (prints each move)
+  -h       This message
+
+Using the default GameListener, creates chessgame.mid for every chessgame.pgn.
+To use your own GameListener, see the Bangkok README file.
+EOS
+  
+  exit 1
+end
+
+$verbose = false
+g = GetoptLong.new(['-c', '--config-file', GetoptLong::REQUIRED_ARGUMENT],
+                   ['-v', '--verbose', GetoptLong::NO_ARGUMENT],
+		   ['-h', '--help', GetoptLong::NO_ARGUMENT])
+config_file_path = nil
+g.each { | opt, arg |
+  case opt
+  when '-c'
+  when '-v'
+    $verbose = true
+  else
+    usage
+  end
+}
+usage if ARGV.length == 0
+
+ARGV.each { | fname |
+  game = ChessGame.new(GameListener.new(config_file_path))
+  File.open(fname, 'r') { | f | game.read_moves(f) }
+  midi_file_name = File.basename(fname).sub(/(\..+)?$/, '.mid')
+  File.open(midi_file_name, 'wb') { | f | game.play(f) }
+}

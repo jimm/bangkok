@@ -1,0 +1,19 @@
+** Bugs
+
+- =Pawn#could_perform_move= does not check for en passant. Might need a new
+  ivar =@moved_two_spaces_on_first_move=.
+
+- =Move#initialize= does not handle "e.p." or "ep" in move text.
+
+** To Do
+
+- Use =Square.at(file, rank)= where appropriate
+
+- Glide between squares
+
+- Time to move relative to distance travelled (quarter note per unit;
+  =length_to_delta(dist)=)
+
+- Configuration file: volume offset, min, max; other params
+
+- More tests

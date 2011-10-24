@@ -1,0 +1,266 @@
+* Bangkok
+
+Bangkok reads chess game descriptions and re-play the games. Notice of
+events (moves, captures, checks, etc.) are sent to a listener. Bangkok comes
+with a listener that generates a MIDI file. In other words, the chess game
+is turned into music.
+
+Bangkok originated as the code for an art project by Tom Peak
+<himself@tompeak.com>.
+
+The Web site of Bangkok is (http://github.com/jimm/bangkok). The older
+RubyForge project page is http://rubyforge.org/projects/bangkok. Bangkok is
+also available as a RubyGem.
+
+
+** Recent Changes
+
+*** 0.1.2
+
+- GameListener#move outputs two notes for a move and sets CC_PORTAMENTO_TIME
+  so there is a glide from the first note to the second. The total length of
+  the two ntoes is proportional to the distance the piece travels. The first
+  note is short (a 32nd note), and the second takes up the rest of the time,
+  thus allowing the portamento to have its effect.
+
+- GameListener#move also outputs multiple volume and pan values, moving
+  smoothly from the original to the new value for the duration of the move's
+  notes.
+
+- New Square.at method returns a ready-made Square. Since they're immutable,
+  this reduces the number of objects that need to be created.
+
+- More tests.
+
+*** 0.1.1
+
+- Fixed bugs in the bin/bangkok script.
+
+- Implemented the -c command line argument.
+
+- Fixed a bug in the GameListener that prevented the MIDI file from being
+  output.
+
+- Added parsing of the config file to GameListener.
+
+
+** Dependencies
+
+The MIDI generation portion of Bangkok requires midilib 0.8.4 or later. If you
+install Bangkok as a RubyGem, it will fetch and install midilib for you.
+
+The test suite in the tests directory requires the testing framework TestUnit,
+which comes with Ruby 1.8 and later and can also be found in the Ruby
+Application Archive (http://raa.ruby-lang.org).
+
+To rebuild the gem or RDocs or run the tests easily, you can use the Rakefile
+which requires Rake (http://rake.rubyforge.org).
+
+
+** Installation
+
+*** RubyGems Installation
+
+To install Bangkok as a gem, type
+
+#+BEGIN_SRC sh
+  gem install bangkok
+#+END_SRC
+
+You may need root privileges to install the gem.
+
+*** Manual Installation
+
+After downloading and expanding the archive, you can install Bangkok with the
+command
+
+#+BEGIN_SRC sh
+  ruby install.rb
+#+END_SRC
+
+(or)
+
+#+BEGIN_SRC sh
+  ruby install.rb --install-dir=my_directory
+#+END_SRC
+
+You may need root privileges to install Bangkok.
+
+** Testing
+
+#+BEGIN_SRC sh
+  rake test
+#+END_SRC
+
+runs all of the tests in the test directory.
+
+
+** Overview
+
+Bangkok replays a chess game. It reads chess game .pgn files. Interesting
+events during each game (moves, captures, checks, etc.) are sent to a
+listener.
+
+Bangkok comes with a GameListener that creates a MIDI sequence. The listener
+is given to a ChessGame object, which then reads a .pgn file, creates a board,
+gives the moves to the board so it can move the pieces, and tells the listener
+when the game is over. At that time, the GameListener writes the MIDI sequence
+out to a MIDI file.
+
+
+** How to Use
+
+*** From the command line
+
+Here is how to generate a MIDI file from a chess match file, using the
+built-in GameListener. (This command line is awkward, and needs to get
+simpler.)
+
+#+BEGIN_SRC sh
+  bangkok [-c my_program_changes.rb] chess_game_file.pgn
+#+END_SRC
+
+Running that command creates the MIDI file chess_game_file.mid. The optional
+configuration file my_program_changes.rb lets you change the default program
+numbers used for each of the pieces. See examples/program_changes.rb for an
+example file.
+
+For example, to run bangkok on the chess game in the examples directory, type
+
+#+BEGIN_SRC sh
+  bangkok examples/game.pgn
+#+END_SRC
+
+*** Example Scripts and Files
+
+Here are short descriptions of each of the files found in the examples
+directory.
+
+- examples/announcer.rb creates a new listener that "announces" the game by
+  printing some descriptive text for everything that happens during the game.
+
+- examples/game.pgn is an example chess match.
+
+- examples/program_changes.rb is an example configuration file that shows you
+  how to change the default program change values. The values in this file are
+  the same as the default values used by GameListener.
+
+
+** The Code
+
+Only one class has anything to do with MIDI at all: GameListener. The rest of
+the classes in Bangkok know only about chess moves. This separation allows you
+to use Bangkok for your own nefarious chess-related purposes, whether musical
+or un-.
+
+GameListener creates a MIDI sequence from the chess game's moves. When a piece
+moves, MIDI notes are generated and a few controller values are set. Any
+listener you write must implement the methods
+- start_game(io)
+- end_game
+- move(piece, from_square, to_square)
+- capture(attacker_piece, loser_piece)
+- check
+- checkmate
+- pawn_to_queen(pawn)
+
+For each move, the GameListener generates three sets of MIDI events: one for
+the move start, one for a point halfway between the start and the destination,
+and one for the destination. GameListener#midi_for_position creates a pan
+value (left = queenside, right = kingside), a volume value (max = center of
+board, min = top and bottom of board), and a quarter note. The note is from a
+C scale, where the low C = the color's home rank and the high C = the opposite
+color's home rank.
+
+  SPEAKER    midi 1 - 8    SPEAKER (black)
+
+     low
+      ^
+      |
+     high
+    volume
+      |
+      v
+     low
+
+      <---- panning ---->
+
+  SPEAKER    midi 9 - 16    SPEAKER (white)
+
+ChessGame takes a listener in its constructor and creates a Board. The method
+ChessGame#read_moves reads game data. Calling ChessGame#play moves the pieces,
+which in turn sends messages to the listener so it can react. See bin/bangkok
+and examples/announcer.rb for examples of how to use a ChessGame object.
+
+Board creates pieces and hands moves to pieces. It tells the listener about
+things like captures and castles.
+
+A Square represents a location on a Board.
+
+A Piece has a color and a Square. It tells the listener about its moves.
+Subclasses of Piece such as Queen and Knight override
+Piece#could_perform_move, which checks to see if that piece could move from
+its current position to the move's destination square. could_perform_move is
+called by the Board to determine which piece on the board needs to be moved.
+
+A Move has a color, a destination square, an optional starting rank or file,
+and optional modifiers such as check or capture. A castle Move has no
+destination square (the Board moves the pieces).
+
+
+** Resources
+
+The Ruby Web site (http://www.ruby-lang.org/en/index.html) contains an
+introduction to Ruby, the Ruby Application Archive (RAA) at
+http://raa.ruby-lang.org, and pointers to more information.
+
+
+_Programming Ruby, The Pragmatic Programmer's Guide_, by David Thomas
+and Andrew Hunt, is a well-written and practical introduction to Ruby. Its Web
+page at http://www.rubycentral.com/book also contains a wealth of Ruby
+information. Though the book is available online, I encourage you to purchase
+a copy of the second edition, available at
+http://pragmaticprogrammer.com/titles/ruby/.
+
+midilib's home is http://midilib.rubyforge.org.
+
+
+* To Do
+
+#+INCLUDE: "TODO.org"
+
+
+* Support
+
+- Visit the forums, bug list, and mailing list pages at
+  http://rubyforge.org/projects/bangkok
+
+- Send email to Jim Menard at mailto:jim@jimmenard.com
+
+- Ask on the ruby-talk mailing list
+
+
+* Administrivia
+
+Author:: Jim Menard (mailto:jim@jimmenard.com)
+Copyright:: Copyright (c) 2005 Jim Menard
+License:: Distributed under the same license as Ruby.
+
+
+** Copying
+
+Bangkok is copyrighted free software by Jim Menard and is released under the
+same license as Ruby. See the Ruby license at
+http://www.ruby-lang.org/en/LICENSE.txt.
+
+Bangkok may be freely copied in its entirety providing this notice, all
+source code, all documentation, and all other files are included.
+
+Bangkok is Copyright (c) 2005 by Jim Menard.
+
+
+** Warranty
+
+This software is provided "as is" and without any express or implied
+warranties, including, without limitation, the implied warranties of
+merchantability and fitness for a particular purpose.

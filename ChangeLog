@@ -1,0 +1,45 @@
+2005-03-26  Jim Menard  <jimm@io.com>
+
+	* lib/bangkok/gamelistener.rb (GameListener::end_game): call
+	Track#sort, not Track#recalc_delta_from_times, because we now
+	generate events out of order.
+	(GameListener::move): generate data differently. Call new
+	generate_* methods. Generate multiple volume and pan values based
+	on distance traveled.
+	(GameListener::interpolate): created.
+	(GameListener::generate_notes): created.
+	(GameListener::file_to_pan): created.
+	(GameListener::rank_to_volume): created.
+	(GameListener::generate_volume): created.
+	(GameListener::generate_pan): created.
+	(GameListener::generate_portamento): created.
+
+	* lib/bangkok/square.rb (Square::distance_to): created.
+	(Square::at): created.
+
+	* lib/bangkok/piece.rb: use new Square.at method where appropriate.
+
+	* lib/bangkok/board.rb: use new Square.at method where appropriate.
+
+2005-03-25  Jim Menard  <jimm@io.com>
+
+	* Version 0.1.1 released.
+
+	* lib/bangkok/chessgame.rb: removed shebang line.
+
+	* lib/bangkok/gamelistener.rb (GameListener::initialize): added
+	config file path argument.
+	(GameListener::read_config): created.
+	(GameListener::end_game): io is an instance var, not a local var.
+	Restructured code around filling in config information.
+
+	* bin/bangkok: fixed really stupid syntax errors. Added -c command
+	line argument. Pass config file path to GameListener.
+
+	* Version 0.1.0 released.
+
+2005-03-24  Jim Menard  <jimm@io.com>
+
+	* Initial project creation.
+
+
