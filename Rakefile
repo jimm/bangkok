@@ -1,10 +1,13 @@
-require 'rubygems'
-require_gem 'rake'
 require 'rake/clean'
+if RUBY_VERSION >= '1.9'
+  require 'rdoc/task'
+  require 'rubygems/package_task'
+  require 'rake/testtask'
+else
 require 'rake/rdoctask'
-require 'rake/gempackagetask'
-require 'rake/contrib/rubyforgepublisher'
-require 'rake/runtest'
+  require 'rake/gempackagetask'
+  require 'rake/runtest'
+end
 
 PROJECT_NAME = 'bangkok'
 RUBYFORGE_USER = 'jimm'
@@ -52,34 +55,42 @@ turned into music.
 EOF
 end
 
-# Creates a :package task (also named :gem). Also useful are :clobber_package
-# and :repackage.
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.need_zip = true
-  pkg.need_tar = true
+if RUBY_VERSION >= '1.9'
+  # Creates a :package task (also named :gem). Also useful are
+  # :clobber_package and :repackage.
+  Gem::PackageTask.new(spec) do |pkg|
+    pkg.need_zip = true
+    pkg.need_tar = true
+  end
+else
+  # Creates a :package task (also named :gem). Also useful are
+  # :clobber_package and :repackage.
+  Rake::GemPackageTask.new(spec) do |pkg|
+    pkg.need_zip = true
+    pkg.need_tar = true
+  end
 end
 
-# require 'rbconfig'
-# if Config::CONFIG['target_os'] =~ /mswin/i
-#   RDOC_FILES = FileList['README', 'TODO', 'lib/**/*.rb']
-#   RDOC_FILES.each { | f | file f }
-#   task :rdoc => RDOC_FILES do
-#     ruby "#{File.join(Config::CONFIG['bindir'], 'rdoc')} -o html " +
-#       " --main 'README' --title '#{PROJECT_NAME}' -T 'html' #{RDOC_FILES}"
-#   end
-# else
-  # creates an "rdoc" task
-  Rake::RDocTask.new do | rd |
-    rd.main = 'README'
-    rd.title = PROJECT_NAME
-    rd.rdoc_files.include('README', 'TODO', 'lib/**/*.rb')
-  end
-# end
+# creates an "rdoc" task
+Rake::RDocTask.new do | rd |
+  rd.main = 'README'
+  rd.title = PROJECT_NAME
+  rd.rdoc_files.include('README', 'TODO', 'lib/**/*.rb')
+end
 
 task :rubyforge => [:rdoc] do
   Rake::RubyForgePublisher.new(PROJECT_NAME, RUBYFORGE_USER).upload
 end
 
-task :test do
-  Rake::run_tests
+if RUBY_VERSION >= '1.9'
+  Rake::TestTask.new do |t|
+    t.libs << File.join(File.dirname(__FILE__), 'test')
+    t.libs << File.join(File.dirname(__FILE__), 'lib')
+    t.ruby_opts << '-rubygems'
+    t.pattern = "test/**/test_*.rb"
+  end
+else
+  task :test do
+    Rake::run_tests
+  end
 end

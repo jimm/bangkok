@@ -5,7 +5,7 @@ begin
   require 'bangkok/chessgame'
 rescue LoadError
   require 'rubygems'
-  require_gem 'bangkok/chessgame'
+  require 'bangkok/chessgame'
 end
 
 class Announcer

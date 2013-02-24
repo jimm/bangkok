@@ -2,7 +2,7 @@ begin
   require 'midilib'
 rescue LoadError
   require 'rubygems'
-  require_gem 'midilib'
+  require 'midilib'
 end
 include MIDI
 
