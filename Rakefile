@@ -42,8 +42,8 @@ spec = Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README', 'TODO']
 
   s.author = 'Jim Menard'
-  s.email = 'jimm@io.com'
-  s.homepage = 'http://bangkok.rubyforge.org'
+  s.email = 'jim@jimmenard.com'
+  s.homepage = 'https://github.com/jimm/bangkok'
   s.rubyforge_project = PROJECT_NAME
 
   s.summary = "Chess game file reader and player; can turn games into MIDI files"

@@ -8,9 +8,8 @@ is turned into music.
 Bangkok originated as the code for an art project by Tom Peak
 <himself@tompeak.com>.
 
-The Web site of Bangkok is (http://github.com/jimm/bangkok). The older
-RubyForge project page is http://rubyforge.org/projects/bangkok. Bangkok is
-also available as a RubyGem.
+The Web site of Bangkok is (http://github.com/jimm/bangkok). Bangkok is also
+available as a RubyGem.
 
 
 ** Recent Changes
