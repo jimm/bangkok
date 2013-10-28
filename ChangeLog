@@ -1,7 +1,8 @@
-2013-10-28  Jim Menard  <jim@jimmenard.com
+2013-10-28  Jim Menard  <jim@jimmenard.com>
 
 	* lib/bangkok/square.rb (Square::initialize): updated for Ruby
 	1.9+, including Ruby 2.0.
+	* Version bumped up to 0.2.0.
 
 2005-03-26  Jim Menard  <jimm@io.com>
 
