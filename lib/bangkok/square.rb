@@ -19,11 +19,11 @@ class Square
       @rank = args[1].to_i
       @color = (((@file & 1) == (@rank & 1)) ? :black : :white) if on_board?
     when /[a-h][1-8]/           # a3, d8
-      @file = args[0][0] - ?a
-      @rank = args[0][1,1].to_i - 1
+      @file = args[0][0].ord - ?a.ord
+      @rank = args[0][1].to_i - 1
       @color = ((@file & 1) == (@rank & 1)) ? :black : :white
     when /[a-h]/                # Either (file letter, rank) or a file 'a'
-      @file = args[0][0] - ?a
+      @file = args[0][0].ord - ?a.ord
       @rank = (args[1].to_i - 1) if args[1]
     when /[1-8]/                # 1, 5
       @rank = args[0].to_i - 1
@@ -53,7 +53,7 @@ class Square
 
   def to_s
     return "<off-board>" if @file.nil? || @rank.nil?
-    return "#{@file ? (?a + file).chr : ''}#{@rank + 1}"
+    return "#{@file ? (?a.ord + file).chr : ''}#{@rank + 1}"
   end
 
   SQUARES = []

@@ -13,7 +13,7 @@ PROJECT_NAME = 'bangkok'
 RUBYFORGE_USER = 'jimm'
 RDOC_DIR = 'html'
 
-PKG_FILES = FileList[ 'ChangeLog', 'Credits', 'README', 'Rakefile', 'TODO',
+PKG_FILES = FileList['ChangeLog', 'Credits', 'README', 'Rakefile', 'TODO',
                      'examples/**/*',
                      'html/**/*',
                      'install.rb',
@@ -86,6 +86,8 @@ if RUBY_VERSION >= '1.9'
   Rake::TestTask.new do |t|
     t.libs << File.join(File.dirname(__FILE__), 'test')
     t.libs << File.join(File.dirname(__FILE__), 'lib')
+    # Lets me use local dev version of midilib
+    t.libs << File.join(ENV['MIDILIB_HOME'], 'lib') if ENV['MIDILIB_HOME']
     t.ruby_opts << '-rubygems'
     t.pattern = "test/**/test_*.rb"
   end

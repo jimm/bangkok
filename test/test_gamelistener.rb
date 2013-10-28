@@ -24,7 +24,7 @@ class GameListenerTest < Test::Unit::TestCase
     assert_equal(63, @listener.file_to_pan(3.5))
   end
 
-  def test_rank_to_pan
+  def test_rank_to_volume
     assert_equal(10, @listener.rank_to_volume(0)) # 10 is minimum volume
     assert_equal(10, @listener.rank_to_volume(7))
     assert_equal(127, @listener.rank_to_volume(3.5))
