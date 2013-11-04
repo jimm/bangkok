@@ -19,7 +19,12 @@ class Announcer
   end
 
   def move(piece, from, to)
-    @out.puts "Piece #{piece} moving to #{to}"
+    msg = if to.on_board?
+            "#{piece} moving to #{to}"
+          else
+            "#{piece} captured"
+          end
+    @out.puts msg
   end
 
   def capture(attacker, loser)

@@ -14,6 +14,13 @@ available as a RubyGem.
 
 ** Recent Changes
 
+*** 0.2.0
+
+- Updated for Ruby 1.9+ and 2.0.
+
+- If MIDILIB_HOME environment variable is defined, that is added to the
+  include path while testing.
+
 *** 0.1.2
 
 - GameListener#move outputs two notes for a move and sets CC_PORTAMENTO_TIME
